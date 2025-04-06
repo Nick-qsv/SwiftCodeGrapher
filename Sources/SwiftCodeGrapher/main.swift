@@ -28,7 +28,8 @@ func main() -> Int {
         let collector = DependencyCollector()
         for fileURL in swiftFileURLs {
             print("Parsing \(fileURL.path)")
-            let syntax = try SyntaxParser.parse(fileURL)
+            let source = try String(contentsOf: fileURL)
+            let syntax = Parser.parse(source: source)
             collector.walk(syntax)
         }
 
@@ -37,7 +38,7 @@ func main() -> Int {
         encoder.outputFormatting = .prettyPrinted
         let jsonData = try encoder.encode(collector.entities)
 
-        // Write JSON to <projectPath>/CodeGraph.json (or change location if you prefer)
+        // Write JSON
         let outputURL = projectURL.appendingPathComponent("CodeGraph.json")
         try jsonData.write(to: outputURL)
 
@@ -57,6 +58,7 @@ func gatherSwiftFiles(in directory: URL) throws -> [URL] {
 
     if let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: nil) {
         for case let fileURL as URL in enumerator {
+            print("Found file: \(fileURL.path)")
             if fileURL.pathExtension == "swift" {
                 swiftFiles.append(fileURL)
             }
