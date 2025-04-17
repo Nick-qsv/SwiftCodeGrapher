@@ -39,10 +39,12 @@ func main() -> Int {
         let jsonData = try encoder.encode(collector.entities)
 
         // Write JSON
-        let outputURL = projectURL.appendingPathComponent("CodeGraph.json")
-        try jsonData.write(to: outputURL)
+        let currentDir = FileManager.default.currentDirectoryPath
+        let outputDirURL = URL(fileURLWithPath: currentDir)
+        let outputURL = outputDirURL.appendingPathComponent("codegraph.json")
 
-        print("✅ Wrote CodeGraph.json to: \(outputURL.path)")
+        try jsonData.write(to: outputURL)
+        print("✅ Wrote codegraph.json to: \(outputURL.path)")
         return 0
 
     } catch {
